@@ -1,2 +1,3 @@
-# connection-pool
+# Connection Pool
+
 A generic connection pool
