@@ -21,6 +21,7 @@ add_library(cpool STATIC pool.cpp connection.cpp)
 target_include_directories( cpool PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}> $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>)
 
 set_property(TARGET cpool PROPERTY CXX_STANDARD 17)
+target_compile_features(cpool PUBLIC cxx_std_17)
 
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/include/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" )
 install(TARGETS cpool EXPORT cpool-export LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
