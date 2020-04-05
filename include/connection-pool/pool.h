@@ -40,7 +40,7 @@ public:
         ConnectionProxy( ConnectionProxy&& other ) noexcept;
         ConnectionProxy& operator=( ConnectionProxy&& other ) noexcept;
 
-        ~ConnectionProxy() noexcept;
+        ~ConnectionProxy();
 
         Connection* operator->();
         Connection& operator*();

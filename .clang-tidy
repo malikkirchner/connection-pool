@@ -12,7 +12,7 @@
 ##====================================================================================================================##
 
 ---
-Checks:          'clang-diagnostic-*,clang-analyzer-*,hicpp-*,readability-*,modernize-*,performance-*,cppcoreguidelines-*,misc-*,bugprone-*,google-*'
+Checks:          'clang-diagnostic-*,clang-analyzer-*,hicpp-*,readability-*,modernize-*,performance-*,cppcoreguidelines-*,misc-*,bugprone-*,google-*,-modernize-use-trailing-return-type'
 WarningsAsErrors: ''
 HeaderFilterRegex: '.*/(src,test)/.*'
 AnalyzeTemporaryDtors: false

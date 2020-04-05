@@ -48,7 +48,7 @@ ConnectionPool::ConnectionProxy::operator=( ConnectionPool::ConnectionProxy&& ot
 }
 
 ConnectionPool::ConnectionProxy::~ConnectionProxy() {
-    if ( m_pool ) {
+    if ( m_pool != nullptr ) {
         m_pool->release_connection( m_connection );
     }
 }
@@ -58,7 +58,7 @@ Connection* ConnectionPool::ConnectionProxy::operator->() { return m_connection;
 Connection& ConnectionPool::ConnectionProxy::operator*() { return *m_connection; }
 
 bool ConnectionPool::ConnectionProxy::valid() const {
-    if ( m_pool && m_connection ) {
+    if ( ( m_pool != nullptr ) && ( m_connection != nullptr ) ) {
         std::unique_lock lock{m_pool->m_connections_mtx};
         return m_pool->m_connections_busy.count( m_connection ) > 0;
     }
