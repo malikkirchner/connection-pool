@@ -1,3 +1,5 @@
+![C/C++ CI](https://github.com/malikkirchner/connection-pool/workflows/C/C++%20CI/badge.svg?branch=master)
+
 # Connection Pool
 
 A generic connection pool for C++.
