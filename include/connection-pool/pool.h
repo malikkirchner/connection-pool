@@ -23,7 +23,6 @@
 
 #include <memory>
 #include <mutex>
-#include <optional>
 #include <unordered_map>
 #include <vector>
 
@@ -63,8 +62,8 @@ protected:
 public:
     virtual ~ConnectionPool();
 
-    std::optional< ConnectionProxy > get_connection();
-    void                             release_connection( ConnectionProxy&& proxy );
+    ConnectionProxy get_connection();
+    void            release_connection( ConnectionProxy&& proxy );
 
     std::size_t size() const;
     std::size_t size_idle() const;

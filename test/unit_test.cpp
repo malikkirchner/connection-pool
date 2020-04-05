@@ -74,16 +74,15 @@ BOOST_AUTO_TEST_CASE( connection_pool ) {
     BOOST_CHECK( pool->size() == 4 );
 
     auto connection = pool->get_connection();
-    BOOST_CHECK( connection.has_value() );
-    BOOST_CHECK( connection->valid() );
+    BOOST_CHECK( connection.valid() );
     BOOST_CHECK( pool->size_busy() == 1 );
     BOOST_CHECK( pool->size_idle() == 3 );
     BOOST_CHECK( pool->size() == 4 );
 
-    auto& test_connection = dynamic_cast< TestConnection& >( **connection );
+    auto& test_connection = dynamic_cast< TestConnection& >( *connection );
     BOOST_CHECK( test_connection.is_healthy() );
 
-    pool->release_connection( std::move( connection.value() ) );
+    pool->release_connection( std::move( connection ) );
     BOOST_CHECK( pool->size_busy() == 0 );
     BOOST_CHECK( pool->size_idle() == 4 );
     BOOST_CHECK( pool->size() == 4 );

@@ -93,11 +93,11 @@ ConnectionPool::ConnectionPool( std::vector< std::unique_ptr< Connection > >&& c
 
 ConnectionPool::~ConnectionPool() = default;
 
-std::optional< ConnectionPool::ConnectionProxy > ConnectionPool::get_connection() {
+ConnectionPool::ConnectionProxy ConnectionPool::get_connection() {
     std::unique_lock lock{m_connections_mtx};
 
     if ( m_connections_idle.empty() ) {
-        return std::nullopt;
+        return ConnectionProxy{this, nullptr};
     }
 
     for ( auto& item : m_connections_idle ) {
@@ -112,7 +112,7 @@ std::optional< ConnectionPool::ConnectionProxy > ConnectionPool::get_connection(
         return proxy;
     }
 
-    return std::nullopt;
+    return ConnectionProxy{this, nullptr};
 }
 
 void ConnectionPool::release_connection( ConnectionPool::ConnectionProxy&& proxy ) {
