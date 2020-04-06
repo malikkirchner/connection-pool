@@ -40,6 +40,11 @@ ConnectionPool::ConnectionProxy::ConnectionProxy( ConnectionPool::ConnectionProx
 
 ConnectionPool::ConnectionProxy&
 ConnectionPool::ConnectionProxy::operator=( ConnectionPool::ConnectionProxy&& other ) noexcept {
+    if ( this == &other ) {
+        // prevent self-assignment
+        return *this;
+    }
+
     m_pool             = other.m_pool;
     m_connection       = other.m_connection;
     other.m_pool       = nullptr;
@@ -97,7 +102,7 @@ ConnectionPool::ConnectionProxy ConnectionPool::get_connection() {
     std::unique_lock lock{m_connections_mtx};
 
     if ( m_connections_idle.empty() ) {
-        return ConnectionProxy{this, nullptr};
+        return ConnectionProxy{nullptr, nullptr};
     }
 
     for ( auto& item : m_connections_idle ) {
@@ -112,7 +117,7 @@ ConnectionPool::ConnectionProxy ConnectionPool::get_connection() {
         return proxy;
     }
 
-    return ConnectionProxy{this, nullptr};
+    return ConnectionProxy{nullptr, nullptr};
 }
 
 void ConnectionPool::release_connection( ConnectionPool::ConnectionProxy&& proxy ) {
