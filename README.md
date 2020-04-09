@@ -2,7 +2,7 @@
 
 # Connection Pool
 
-A generic connection pool for C++.
+[A generic connection pool for C++.](https://levelup.gitconnected.com/a-universal-connection-pool-written-in-c-6f4f14a98a9e)
 
 ## Build and test
 
