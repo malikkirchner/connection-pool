@@ -30,10 +30,10 @@ namespace cpool {
 /*====================================================================================================================*/
 
 ConnectionPool::ConnectionProxy::ConnectionProxy( ConnectionPool* pool, Connection* connection ) noexcept
-    : m_pool{pool}, m_connection{connection} {}
+    : m_pool{ pool }, m_connection{ connection } {}
 
 ConnectionPool::ConnectionProxy::ConnectionProxy( ConnectionPool::ConnectionProxy&& other ) noexcept
-    : m_pool{other.m_pool}, m_connection{other.m_connection} {
+    : m_pool{ other.m_pool }, m_connection{ other.m_connection } {
     other.m_pool       = nullptr;
     other.m_connection = nullptr;
 }
@@ -64,7 +64,7 @@ Connection& ConnectionPool::ConnectionProxy::operator*() { return *m_connection;
 
 bool ConnectionPool::ConnectionProxy::valid() const {
     if ( ( m_pool != nullptr ) && ( m_connection != nullptr ) ) {
-        std::unique_lock lock{m_pool->m_connections_mtx};
+        std::unique_lock lock{ m_pool->m_connections_mtx };
         return m_pool->m_connections_busy.count( m_connection ) > 0;
     }
 
@@ -99,10 +99,10 @@ ConnectionPool::ConnectionPool( std::vector< std::unique_ptr< Connection > >&& c
 ConnectionPool::~ConnectionPool() = default;
 
 ConnectionPool::ConnectionProxy ConnectionPool::get_connection() {
-    std::unique_lock lock{m_connections_mtx};
+    std::unique_lock lock{ m_connections_mtx };
 
     if ( m_connections_idle.empty() ) {
-        return ConnectionProxy{nullptr, nullptr};
+        return ConnectionProxy{ nullptr, nullptr };
     }
 
     for ( auto& item : m_connections_idle ) {
@@ -110,14 +110,13 @@ ConnectionPool::ConnectionProxy ConnectionPool::get_connection() {
             continue;
         }
 
-        ConnectionProxy proxy{this, item.first};
-        m_connections_busy.emplace( item.first, std::move( item.second ) );
-        m_connections_idle.erase( m_connections_idle.begin() );
-
+        ConnectionProxy proxy{ this, item.first };
+        auto            node = m_connections_idle.extract( item.first );
+        m_connections_busy.insert( std::move( node ) );
         return proxy;
     }
 
-    return ConnectionProxy{nullptr, nullptr};
+    return ConnectionProxy{ nullptr, nullptr };
 }
 
 void ConnectionPool::release_connection( ConnectionPool::ConnectionProxy&& proxy ) {
@@ -129,31 +128,31 @@ void ConnectionPool::release_connection( Connection* connection ) {
         return;
     }
 
-    std::unique_lock lock{m_connections_mtx};
+    std::unique_lock lock{ m_connections_mtx };
     if ( auto it = m_connections_busy.find( connection ); it != m_connections_busy.end() ) {
         check_connect( *it->second );
-        m_connections_idle.emplace( it->first, std::move( it->second ) );
-        m_connections_busy.erase( it );
+        auto node = m_connections_busy.extract( it );
+        m_connections_idle.insert( std::move( node ) );
     }
 }
 
 std::size_t ConnectionPool::size() const {
-    std::unique_lock lock{m_connections_mtx};
+    std::unique_lock lock{ m_connections_mtx };
     return m_connections_busy.size() + m_connections_idle.size();
 }
 
 std::size_t ConnectionPool::size_idle() const {
-    std::unique_lock lock{m_connections_mtx};
+    std::unique_lock lock{ m_connections_mtx };
     return m_connections_idle.size();
 }
 
 std::size_t ConnectionPool::size_busy() const {
-    std::unique_lock lock{m_connections_mtx};
+    std::unique_lock lock{ m_connections_mtx };
     return m_connections_busy.size();
 }
 
 void ConnectionPool::heart_beat() {
-    std::unique_lock lock{m_connections_mtx};
+    std::unique_lock lock{ m_connections_mtx };
 
     // Only send heart beat on idle connections,
     // busy connections should be busy for a reason.
